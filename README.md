@@ -58,37 +58,126 @@ El firmware Arduino evalúa alarmas y controla actuadores. La API Node.js actúa
 
 Ciclo de alimentación: cada 6 horas simuladas (4 ciclos/día). Fuentes: FAO, K-State Extension, Alabama Cooperative Extension.
 
-## Requisitos
+## Requisitos previos
 
-- Node.js 18+
-- VS Code + extensión Wokwi (para el simulador)
-- Cuenta Wokwi (para RFC2217)
+| Herramienta | Versión mínima | Descarga |
+|-------------|---------------|----------|
+| Node.js | 20 LTS | https://nodejs.org |
+| VS Code | cualquiera | https://code.visualstudio.com |
+| Git | cualquiera | https://git-scm.com |
 
-## Instalación
+## Extensiones de VS Code requeridas
+
+Instálalas desde el panel de extensiones (`Ctrl+Shift+X`) o con los comandos:
 
 ```bash
-cd simulador
-npm install
-cp .env.example .env   # ajusta ubicación y umbrales si es necesario
+# Simulador Wokwi (requiere cuenta gratuita en wokwi.com)
+code --install-extension wokwi.wokwi-vscode
+
+# Soporte C/C++ para el firmware Arduino
+code --install-extension ms-vscode.cpptools
 ```
 
-## Uso
+> **Cuenta Wokwi:** regístrate gratis en https://wokwi.com y activa la licencia en VS Code con `F1 → Wokwi: Request License`.
 
-### 1. Iniciar el simulador Wokwi
+## Instalación paso a paso
 
-Abre `simulador/` en VS Code y ejecuta `F1 → Wokwi: Start Simulator`. Mantén visible la pestaña del simulador. Expone el serial en `localhost:4000`.
+### 1. Clonar el repositorio
 
-### 2. Iniciar API y front
+```bash
+git clone <url-del-repositorio>
+cd gallenero/simulador
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+```
+
+Esto instala en un solo paso la API (Express) y el front (React/Vite) gracias al workspace de npm.
+
+### 3. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+Edita `.env` si quieres cambiar la ubicación geográfica o los umbrales de temperatura. Los valores por defecto apuntan a Santiago de Chile y funcionan sin modificaciones.
+
+```bash
+API_PORT=3000
+WOKWI_RFC2217_PORT=4000
+
+WEATHER_LOCATION="Santiago, CL"
+WEATHER_LATITUDE=-33.4489
+WEATHER_LONGITUDE=-70.6693
+WEATHER_TIMEZONE=America/Santiago
+
+WEATHER_AUTOMATION_ENABLED=true
+WEATHER_LOW_TEMP=10       # calefactor ON bajo este °C
+WEATHER_HIGH_TEMP=26      # ventilador ON sobre este °C
+
+LIGHT_AUTOMATION_ENABLED=true
+LIGHT_ON_HOUR=6
+LIGHT_OFF_HOUR=20
+```
+
+## Ejecución
+
+### Paso 1 — Abrir el proyecto en VS Code
+
+Abre la carpeta `simulador/` (no la raíz del repo) en VS Code para que la extensión Wokwi detecte el archivo `wokwi.toml`:
+
+```bash
+code simulador/
+```
+
+### Paso 2 — Iniciar el simulador Wokwi
+
+1. Presiona `F1` y ejecuta **`Wokwi: Start Simulator`**
+2. Se abre una pestaña con el circuito animado del gallinero
+3. **Mantén la pestaña del simulador visible** — Wokwi pausa la simulación si la pestaña queda en segundo plano
+4. El simulador expone el puerto serial en `localhost:4000` vía RFC2217
+
+> Si el simulador no aparece, verifica que tengas la licencia activa: `F1 → Wokwi: Request License`.
+
+### Paso 3 — Iniciar API y dashboard
+
+En una terminal separada (con el simulador ya corriendo):
 
 ```bash
 cd simulador
 npm run dev
 ```
 
-| Servicio | URL |
-|----------|-----|
-| API | http://localhost:3000 |
-| Dashboard | http://localhost:5173 |
+Esto levanta en paralelo:
+
+| Servicio | URL | Descripción |
+|----------|-----|-------------|
+| API REST | http://localhost:3000 | Express + lógica de negocio |
+| Dashboard | http://localhost:5173 | React/Vite con hot-reload |
+
+Abre http://localhost:5173 en el navegador. Si el simulador Wokwi está activo, verás la telemetría en tiempo real con el indicador **SIMULADOR** en verde.
+
+### Scripts disponibles
+
+```bash
+npm run dev          # API + front en paralelo (recomendado)
+npm run dev:api      # solo la API
+npm run dev:front    # solo el front
+npm run build        # compila el front para producción
+npm run start        # inicia la API en modo producción
+```
+
+## Solución de problemas comunes
+
+| Problema | Causa probable | Solución |
+|----------|---------------|----------|
+| `EADDRINUSE: port 3000` | Hay una instancia de la API ya corriendo | `kill $(lsof -t -i:3000)` |
+| Dashboard muestra **DESCONECTADO** | Wokwi no está corriendo o está pausado | Activa la pestaña del simulador en VS Code |
+| Simulador no arranca | Licencia Wokwi no activa | `F1 → Wokwi: Request License` |
+| `npm install` falla | Node.js < 20 | Actualiza Node.js a la versión LTS |
 
 ## Variables de entorno
 
