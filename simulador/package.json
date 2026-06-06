@@ -1,0 +1,21 @@
+{
+  "name": "gallinero-industrial",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/api",
+    "apps/front"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev-all.js",
+    "dev:api": "npm run dev --workspace @gallinero/api",
+    "dev:front": "npm run dev --workspace @gallinero/front",
+    "build": "npm run build --workspace @gallinero/front",
+    "build:firmware": "arduino-cli compile --fqbn arduino:avr:mega --output-dir build gallinero",
+    "start": "npm run start --workspace @gallinero/api"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

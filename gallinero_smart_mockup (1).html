@@ -3,12 +3,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/tabler-icons.min.css">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   
   * { margin:0; padding:0; box-sizing:border-box; }
   
@@ -75,10 +71,11 @@
     cursor: pointer;
     white-space: nowrap;
     color: var(--muted);
-
-
+    transition: all .15s;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
   }
-.frank{};
   .nav-tab:hover { background: var(--bg); color: var(--text); }
   .nav-tab.active { background: var(--green-light); color: var(--green); }
 
@@ -405,6 +402,112 @@
   .page-title { font-size: 17px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
   .page-title i { color: var(--green); }
 
+  /* ── LOGIN OVERLAY ── */
+  #login-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 20, 18, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 36px 32px 28px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  }
+  .login-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+  }
+  .login-logo i { font-size: 22px; }
+  .login-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .login-field {
+    margin-bottom: 14px;
+  }
+  .login-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .login-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .login-field input:focus {
+    border-color: var(--green);
+    background: #fff;
+  }
+  .login-error {
+    font-size: 12px;
+    color: var(--red);
+    background: var(--red-light);
+    border-radius: 7px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    display: none;
+  }
+  .login-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 6px;
+  }
+  .login-btn:hover { background: #2d6535; }
+  .login-demo-hint {
+    margin-top: 18px;
+    background: var(--green-light);
+    border: 1px solid #b6dfbc;
+    border-radius: 9px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  .login-demo-hint strong { color: var(--green); display: block; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+  .demo-cred { display: flex; justify-content: space-between; margin-top: 5px; }
+  .demo-cred span { color: var(--muted); }
+  .demo-cred code { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text); background: rgba(0,0,0,.06); padding: 1px 6px; border-radius: 4px; cursor: pointer; }
+  .demo-cred code:hover { background: rgba(58,125,68,.15); color: var(--green); }
+
   /* mobile nav at bottom for phone mockup feel */
   .bottom-note {
     text-align: center;
@@ -419,6 +522,40 @@
 </head>
 <body>
 
+<!-- ══ LOGIN OVERLAY ══ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo"><i class="ti ti-feather"></i> GallineroSmart</div>
+    <div class="login-subtitle">Sistema de Monitoreo Avícola · Ingreso seguro</div>
+
+    <div class="login-field">
+      <label>Usuario</label>
+      <input type="text" id="login-user" placeholder="Ingresa tu usuario" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+
+    <div id="login-error" class="login-error"><i class="ti ti-alert-circle"></i> Usuario o contraseña incorrectos.</div>
+
+    <button class="login-btn" onclick="doLogin()"><i class="ti ti-login"></i> Ingresar al sistema</button>
+
+    <div class="login-demo-hint">
+      <strong>🔑 Credenciales demo</strong>
+      <div class="demo-cred">
+        <span>Usuario</span>
+        <code onclick="document.getElementById('login-user').value=this.innerText" title="Haz clic para rellenar">admin</code>
+      </div>
+      <div class="demo-cred">
+        <span>Contraseña</span>
+        <code onclick="document.getElementById('login-pass').value=this.innerText" title="Haz clic para rellenar">1234</code>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px">Haz clic en los valores para autocompletar.</div>
+    </div>
+  </div>
+</div>
+
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="logo"><i class="ti ti-feather"></i> GallineroSmart</div>
@@ -432,12 +569,9 @@
     <button class="nav-tab" onclick="show('dfd')"><i class="ti ti-git-branch"></i> DFD</button>
     <button class="nav-tab" onclick="show('firma')"><i class="ti ti-signature"></i> Aprobación</button>
   </div>
-  <div class="alarm-badge" id="alarm-badge" onclick="show('alarma')">
-    <div class="status-dot" id="status-dot"></div> <span id="badge-text">Sistema OK</span>
+  <div class="alarm-badge" onclick="show('alarma')">
+    <div class="status-dot"></div> Sistema OK
   </div>
-  <button class="btn" id="btn-serial" onclick="connectSerial()" title="Conectar con Pico via Web Serial API" style="margin-left:8px;padding:4px 12px;font-size:12px;height:32px">
-    <i class="ti ti-plug"></i> <span id="serial-label">Conectar Pico</span>
-  </button>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -450,37 +584,37 @@
   <div class="grid-4">
     <div class="card">
       <div class="card-title"><i class="ti ti-temperature"></i> Temperatura</div>
-      <div class="big-val" id="dash-temp">22<span class="big-unit">°C</span></div>
+      <div class="big-val">22<span class="big-unit">°C</span></div>
       <div class="card-sub">↔ Rango ideal 10–26 °C</div>
       <div class="gauge-wrap">
-        <div class="gauge-track"><div class="gauge-fill" id="dash-temp-fill" style="width:50%;background:#3a7d44"></div></div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:50%;background:#3a7d44"></div></div>
         <div class="gauge-label"><span>0°</span><span>50°</span></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-drop"></i> Humedad</div>
-      <div class="big-val" id="dash-hum">61<span class="big-unit">%</span></div>
+      <div class="big-val">61<span class="big-unit">%</span></div>
       <div class="card-sub">Óptimo 50–70 %</div>
       <div class="gauge-wrap">
-        <div class="gauge-track"><div class="gauge-fill" id="dash-hum-fill" style="width:61%;background:#2563a8"></div></div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:61%;background:#2563a8"></div></div>
         <div class="gauge-label"><span>0%</span><span>100%</span></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-grain"></i> Nivel alimento</div>
-      <div class="big-val" id="dash-food">68<span class="big-unit">%</span></div>
-      <div class="card-sub" id="dash-food-sub"><span class="pill pill-green"><i class="ti ti-check"></i> Suficiente</span></div>
+      <div class="big-val">68<span class="big-unit">%</span></div>
+      <div class="card-sub"><span class="pill pill-green"><i class="ti ti-check"></i> Suficiente</span></div>
       <div class="gauge-wrap">
-        <div class="gauge-track"><div class="gauge-fill" id="dash-food-fill" style="width:68%;background:#3a7d44"></div></div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:68%;background:#3a7d44"></div></div>
         <div class="gauge-label"><span>Vacío</span><span>Lleno</span></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title"><i class="ti ti-egg"></i> Huevos hoy</div>
-      <div class="big-val" id="dash-eggs">47<span class="big-unit">u</span></div>
+      <div class="big-val">47<span class="big-unit">u</span></div>
       <div class="card-sub">Promedio semana: 44 u</div>
       <div style="margin-top:8px">
-        <span class="pill pill-green" id="dash-egg-pill"><i class="ti ti-trending-up"></i> +7% vs ayer</span>
+        <span class="pill pill-green"><i class="ti ti-trending-up"></i> +7% vs ayer</span>
       </div>
     </div>
   </div>
@@ -490,16 +624,16 @@
     <div class="card">
       <div class="card-title"><i class="ti ti-settings"></i> Estado de sistemas</div>
       <div class="toggle-row">
-        <div><div class="toggle-label">💡 Iluminación LED</div><div class="toggle-sub" id="dash-light-sub">14 h/día · ciclo solar activo</div></div>
-        <div class="toggle on" id="dash-light-toggle"></div>
+        <div><div class="toggle-label">💡 Iluminación LED</div><div class="toggle-sub">14 h/día · ciclo solar activo</div></div>
+        <div class="toggle on" onclick="toggleIt(this)"></div>
       </div>
       <div class="toggle-row">
-        <div><div class="toggle-label">🌀 Extractores aire</div><div class="toggle-sub" id="dash-fan-sub">Activación &gt; 26 °C</div></div>
-        <div class="toggle" id="dash-fan-toggle"></div>
+        <div><div class="toggle-label">🌀 Extractores aire</div><div class="toggle-sub">Activación &gt; 26 °C</div></div>
+        <div class="toggle" onclick="toggleIt(this)"></div>
       </div>
       <div class="toggle-row">
-        <div><div class="toggle-label">🔥 Calefacción</div><div class="toggle-sub" id="dash-heat-sub">Activación &lt; 10 °C</div></div>
-        <div class="toggle" id="dash-heat-toggle"></div>
+        <div><div class="toggle-label">🔥 Calefacción</div><div class="toggle-sub">Activación &lt; 10 °C</div></div>
+        <div class="toggle" onclick="toggleIt(this)"></div>
       </div>
       <div class="toggle-row">
         <div><div class="toggle-label">💧 Agua por goteo</div><div class="toggle-sub">Presión normal 1.2 bar</div></div>
@@ -705,7 +839,7 @@
         <!-- noche 21-24 -->
         <div class="light-segment" style="left:87.5%;width:12.5%;background:#1a1a18;opacity:.7"></div>
         <!-- NOW indicator -->
-        <div id="light-now-bar" style="position:absolute;left:29%;top:0;width:2px;height:100%;background:#3a7d44"></div>
+        <div style="position:absolute;left:29%;top:0;width:2px;height:100%;background:#3a7d44"></div>
       </div>
       <div class="light-hours">
         <span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span>
@@ -714,7 +848,7 @@
         <div class="leg-item"><div class="leg-dot" style="background:#FFC145"></div>Luz natural</div>
         <div class="leg-item"><div class="leg-dot" style="background:#FFE082"></div>LED suplementario</div>
         <div class="leg-item"><div class="leg-dot" style="background:#1a1a18"></div>Noche</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#3a7d44"></div><span id="light-now-label">▶ Ahora (07h)</span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:#3a7d44"></div>▶ Ahora (07h)</div>
       </div>
       <div style="margin-top:12px;background:var(--amber-light);border-radius:8px;padding:10px;font-size:12px;color:var(--amber)">
         <i class="ti ti-sun"></i> Total luz asegurada hoy: <strong>14 h</strong> (06:00–21:00 · Natural 13h + LED 2h supl.)
@@ -779,23 +913,23 @@
       <div class="card-title"><i class="ti ti-grain"></i> Nivel de silos (sensor ultrasónico)</div>
       <div class="silo-wrap">
         <div class="silo-col">
-          <div class="silo-pct" id="silo-a-pct">68%</div>
+          <div class="silo-pct">68%</div>
           <div class="silo-bar" style="height:100px">
-            <div class="silo-fill" id="silo-a-fill" style="height:68%;background:var(--green)"></div>
+            <div class="silo-fill" style="height:68%;background:var(--green)"></div>
           </div>
           <div class="silo-label">Silo A</div>
         </div>
         <div class="silo-col">
-          <div class="silo-pct" id="silo-b-pct" style="color:var(--amber)">22%</div>
+          <div class="silo-pct" style="color:var(--amber)">22%</div>
           <div class="silo-bar" style="height:100px">
-            <div class="silo-fill" id="silo-b-fill" style="height:22%;background:var(--amber)"></div>
+            <div class="silo-fill" style="height:22%;background:var(--amber)"></div>
           </div>
           <div class="silo-label">Silo B</div>
         </div>
         <div class="silo-col">
-          <div class="silo-pct" id="silo-c-pct">85%</div>
+          <div class="silo-pct">85%</div>
           <div class="silo-bar" style="height:100px">
-            <div class="silo-fill" id="silo-c-fill" style="height:85%;background:var(--green)"></div>
+            <div class="silo-fill" style="height:85%;background:var(--green)"></div>
           </div>
           <div class="silo-label">Silo C</div>
         </div>
@@ -856,7 +990,7 @@
   <div class="grid-4">
     <div class="card" style="background:var(--green-light)">
       <div class="card-title" style="color:var(--green)"><i class="ti ti-egg"></i> Producción total mes</div>
-      <div class="big-val" id="stat-eggs-total" style="color:var(--green)">1,295<span class="big-unit">u</span></div>
+      <div class="big-val" style="color:var(--green)">1,342<span class="big-unit">u</span></div>
       <div class="card-sub" style="color:var(--green)">↑ +8.3% vs mes anterior</div>
     </div>
     <div class="card" style="background:var(--blue-light)">
@@ -866,7 +1000,7 @@
     </div>
     <div class="card" style="background:var(--amber-light)">
       <div class="card-title" style="color:var(--amber)"><i class="ti ti-alert-circle"></i> Errores del sistema</div>
-      <div class="big-val" id="stat-errors-total" style="color:var(--amber)">2<span class="big-unit">ev</span></div>
+      <div class="big-val" style="color:var(--amber)">3<span class="big-unit">ev</span></div>
       <div class="card-sub" style="color:var(--amber)">2 resueltos auto · 1 manual</div>
     </div>
     <div class="card" style="background:var(--green-light)">
@@ -1092,324 +1226,156 @@
 <div class="bottom-note">GallineroSmart · Mockup Digital Interactivo — Etapa 2: Diseño · Cooperativa Avícola Local</div>
 
 <script>
-/* =============================================================
-   CONSTANTES — espejo exacto de sketch.ino
-   ============================================================= */
-const TEMP_HIGH      = 26.0;
-const TEMP_LOW       = 10.0;
-const TEMP_DANGER_HI = 34.0;
-const TEMP_DANGER_LO =  4.0;
-const TEMP_WARN_HI   = 30.0;
-const TEMP_WARN_LO   =  7.0;
-const LIGHT_ON_H     =  6;
-const LIGHT_OFF_H    = 20;
-const FEED_EVERY_H   =  6;
-const SUPPLY_WARN    =  8;
-const SUPPLY_CRIT    = 12;
-
-/* =============================================================
-   ESTADO — espejo del estado global del sketch C
-   ============================================================= */
-const SIM = {
-  temp: 22.0, hum: 65.0,
-  simHour: 7,
-  alarmState: 'OK',
-  fan: false, heat: false, light: true,
-  feedCount: 0, eggCount: 0, errorCount: 0,
-  siloA: 68, siloB: 22, siloC: 85,
-  lastHourFed: -1,
-  serialPort: null, connected: false,
-};
-
-/* =============================================================
-   LÓGICA — misma que el sketch.ino (evaluateAlarms, thermal, etc.)
-   ============================================================= */
-function evaluateAlarms() {
-  if (SIM.temp > TEMP_DANGER_HI || SIM.temp < TEMP_DANGER_LO) { SIM.errorCount++; return 'DANGER'; }
-  if (SIM.feedCount >= SUPPLY_CRIT) { SIM.errorCount++; return 'DANGER'; }
-  if (SIM.temp > TEMP_WARN_HI || SIM.temp < TEMP_WARN_LO || SIM.feedCount >= SUPPLY_WARN) return 'WARNING';
-  return 'OK';
-}
-function updateThermal() {
-  SIM.fan  = SIM.temp > TEMP_HIGH;
-  SIM.heat = SIM.temp < TEMP_LOW;
-}
-function updateLighting() {
-  SIM.light = SIM.simHour >= LIGHT_ON_H && SIM.simHour < LIGHT_OFF_H;
-}
-function simulateSensor() {
-  SIM.temp += (Math.random() - 0.5) * 0.4;
-  SIM.hum  += (Math.random() - 0.5) * 0.8;
-  SIM.temp  = Math.max(0,  Math.min(45, SIM.temp));
-  SIM.hum   = Math.max(30, Math.min(90, SIM.hum));
-}
-function clockTick() {
-  SIM.simHour = (SIM.simHour + 1) % 24;
-  updateLighting();
-  if (SIM.simHour !== SIM.lastHourFed && SIM.simHour % FEED_EVERY_H === 0) {
-    SIM.feedCount++;
-    SIM.lastHourFed = SIM.simHour;
-    SIM.siloA = Math.max(0, SIM.siloA - 2.0);
-    SIM.siloB = Math.max(0, SIM.siloB - 3.0);
-    SIM.siloC = Math.max(0, SIM.siloC - 1.5);
-  }
-  if (SIM.simHour === 12) SIM.eggCount++;
-}
-
-/* =============================================================
-   ACTUALIZAR UI — todos los elementos del dashboard
-   ============================================================= */
-function $e(id) { return document.getElementById(id); }
-
-function updateUI() {
-  const t = SIM.temp, h = SIM.hum, s = SIM.alarmState, hr = SIM.simHour;
-
-  /* ── Nav badge ── */
-  const BADGE_CFG = {
-    OK:      { bg:'var(--green-light)', color:'var(--green)', border:'#b6dfbc', label:'Sistema OK'   },
-    WARNING: { bg:'var(--amber-light)', color:'var(--amber)', border:'#f5d9a8', label:'Aviso activo' },
-    DANGER:  { bg:'var(--red-light)',   color:'var(--red)',   border:'#f5c3be', label:'¡Alerta!'     },
-  };
-  const bc = BADGE_CFG[s];
-  const badge = $e('alarm-badge'), dot = $e('status-dot'), bt = $e('badge-text');
-  if (badge) { badge.style.background = bc.bg; badge.style.color = bc.color; badge.style.borderColor = bc.border; }
-  if (dot)   dot.style.background  = bc.color;
-  if (bt)    bt.textContent        = bc.label;
-
-  /* ── Dashboard KPIs ── */
-  const tColor = t > TEMP_HIGH ? '#b53a2f' : t < TEMP_LOW ? '#2563a8' : '#3a7d44';
-  if ($e('dash-temp'))      $e('dash-temp').innerHTML       = Math.round(t) + '<span class="big-unit">°C</span>';
-  if ($e('dash-temp-fill')) { $e('dash-temp-fill').style.width = (t/50*100).toFixed(1)+'%'; $e('dash-temp-fill').style.background = tColor; }
-  if ($e('dash-hum'))       $e('dash-hum').innerHTML        = Math.round(h) + '<span class="big-unit">%</span>';
-  if ($e('dash-hum-fill'))  $e('dash-hum-fill').style.width = h.toFixed(0) + '%';
-
-  const siloMin  = Math.min(SIM.siloA, SIM.siloB, SIM.siloC);
-  const fColor   = siloMin < 20 ? '#b53a2f' : siloMin < 30 ? '#c17f24' : '#3a7d44';
-  const fPill    = siloMin < 20 ? 'pill pill-red' : siloMin < 30 ? 'pill pill-amber' : 'pill pill-green';
-  const fLabel   = siloMin < 20 ? 'Crítico'       : siloMin < 30 ? 'Bajo'           : 'Suficiente';
-  if ($e('dash-food'))      $e('dash-food').innerHTML       = siloMin.toFixed(0) + '<span class="big-unit">%</span>';
-  if ($e('dash-food-fill')) { $e('dash-food-fill').style.width = siloMin.toFixed(0)+'%'; $e('dash-food-fill').style.background = fColor; }
-  if ($e('dash-food-sub'))  $e('dash-food-sub').innerHTML  = `<span class="${fPill}"><i class="ti ti-grain"></i> ${fLabel}</span>`;
-  if ($e('dash-eggs'))      $e('dash-eggs').innerHTML       = SIM.eggCount + '<span class="big-unit">u</span>';
-
-  /* ── Toggles dashboard ── */
-  const tog = [['dash-light-toggle', SIM.light], ['dash-fan-toggle', SIM.fan], ['dash-heat-toggle', SIM.heat]];
-  tog.forEach(([id, on]) => { const el = $e(id); if (el) el.classList.toggle('on', on); });
-  if ($e('dash-light-sub')) $e('dash-light-sub').textContent = SIM.light ? `Encendida · Hora ${hr}:00 (ciclo solar)` : 'Apagada · fuera del ciclo solar';
-  if ($e('dash-fan-sub'))   $e('dash-fan-sub').textContent   = SIM.fan   ? '✅ ACTIVO — Temperatura alta'     : 'Inactivo · Activa >26 °C';
-  if ($e('dash-heat-sub'))  $e('dash-heat-sub').textContent  = SIM.heat  ? '✅ ACTIVA — Temperatura baja'     : 'Inactiva · Activa <10 °C';
-
-  /* ── Pantalla Alarma ── */
-  updateAlarmScreen(s);
-
-  /* ── Pantalla Temperatura ── */
-  if ($e('temp-val'))    $e('temp-val').innerHTML    = t.toFixed(1) + '<span class="big-unit">°C</span>';
-  if ($e('temp-needle')) $e('temp-needle').style.left = (t/50*100).toFixed(1) + '%';
-  if ($e('fan-toggle'))  $e('fan-toggle').classList.toggle('on', SIM.fan);
-  if ($e('heat-toggle')) $e('heat-toggle').classList.toggle('on', SIM.heat);
-  if ($e('fan-sub'))     $e('fan-sub').textContent   = SIM.fan  ? '✅ ACTIVO — Temperatura alta'  : 'Inactivo · Activa >26°C';
-  if ($e('heat-sub'))    $e('heat-sub').textContent  = SIM.heat ? '✅ ACTIVA — Temperatura baja'  : 'Inactiva · Activa <10°C';
-  const tsb = $e('temp-status-box'), tst = $e('temp-status-text'), tat = $e('temp-action-text');
-  if (tsb && tst && tat) {
-    if (t > TEMP_HIGH)      { tsb.style.background='var(--red-light)';   tst.style.color='var(--red)';   tst.textContent='🌡 Temperatura ALTA — Extractor ON'; tat.textContent='Extractor activado automáticamente.'; }
-    else if (t < TEMP_LOW)  { tsb.style.background='var(--blue-light)';  tst.style.color='var(--blue)';  tst.textContent='❄ Temperatura BAJA — Calefacción ON'; tat.textContent='Calefacción activada automáticamente.'; }
-    else                    { tsb.style.background='var(--green-light)';  tst.style.color='var(--green)'; tst.textContent='✅ Temperatura normal'; tat.textContent='Sin acción requerida. Rango ideal activo.'; }
-  }
-
-  /* ── Pantalla Iluminación ── */
-  const nowPct = (hr / 24 * 100).toFixed(1) + '%';
-  if ($e('light-now-bar'))   $e('light-now-bar').style.left    = nowPct;
-  if ($e('light-now-label')) $e('light-now-label').textContent = `▶ Ahora (${String(hr).padStart(2,'0')}h)`;
-
-  /* ── Pantalla Alimentos — silos ── */
-  [['silo-a-pct','silo-a-fill', SIM.siloA],
-   ['silo-b-pct','silo-b-fill', SIM.siloB],
-   ['silo-c-pct','silo-c-fill', SIM.siloC]].forEach(([pid, fid, val]) => {
-    const color = val < 20 ? 'var(--red)' : val < 30 ? 'var(--amber)' : 'var(--green)';
-    const pe = $e(pid), fe = $e(fid);
-    if (pe) { pe.textContent = val.toFixed(0)+'%'; pe.style.color = color; }
-    if (fe) { fe.style.height = val.toFixed(0)+'%'; fe.style.background = color; }
-  });
-
-  /* ── Pantalla Estadísticas ── */
-  if ($e('stat-eggs-total'))   $e('stat-eggs-total').innerHTML   = (1295 + SIM.eggCount).toLocaleString() + '<span class="big-unit">u</span>';
-  if ($e('stat-errors-total')) $e('stat-errors-total').innerHTML = (2 + SIM.errorCount) + '<span class="big-unit">ev</span>';
-}
-
-function updateAlarmScreen(state) {
-  const light = $e('alarm-light'), label = $e('alarm-label'), desc = $e('alarm-desc');
-  const pTitle = $e('push-title'), pBody = $e('push-body');
-  if (!light) return;
-  light.className = 'alarm-light';
-  const siloMin = Math.min(SIM.siloA, SIM.siloB, SIM.siloC);
-  if (state === 'OK') {
-    light.classList.add('alarm-green');
-    light.innerHTML = '<div class="alarm-ring"></div><i class="ti ti-check" style="font-size:28px"></i>';
-    if (label)  label.textContent  = 'VERDE · Todo OK';
-    if (desc)   desc.textContent   = 'Todos los sistemas operando dentro de parámetros normales.';
-    if (pTitle) pTitle.textContent = '✅ Sistema operando normalmente';
-    if (pBody)  pBody.textContent  = `Temperatura ${SIM.temp.toFixed(1)}°C · Alimento ${siloMin.toFixed(0)}% · ${SIM.eggCount} huevos hoy`;
-  } else if (state === 'WARNING') {
-    light.classList.add('alarm-amber');
-    light.innerHTML = '<div class="alarm-ring"></div><i class="ti ti-alert-triangle" style="font-size:28px"></i>';
-    if (label)  label.textContent  = 'AMARILLO · Aviso';
-    if (desc)   desc.textContent   = SIM.feedCount >= SUPPLY_WARN ? 'Reposición de alimento requerida pronto.' : `Temperatura ${SIM.temp.toFixed(1)}°C fuera de rango óptimo.`;
-    if (pTitle) pTitle.textContent = '🟡 Aviso: revisar suministros';
-    if (pBody)  pBody.textContent  = 'Requiere atención no urgente.';
+// ── LOGIN ──
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-error');
+  if (user === 'admin' && pass === '1234') {
+    const overlay = document.getElementById('login-overlay');
+    overlay.style.transition = 'opacity .4s';
+    overlay.style.opacity = '0';
+    setTimeout(() => overlay.style.display = 'none', 420);
   } else {
-    light.classList.add('alarm-red');
-    light.innerHTML = '<div class="alarm-ring"></div><i class="ti ti-alert-octagon" style="font-size:28px"></i>';
-    if (label)  label.textContent  = 'ROJO · Checkeo manual urgente';
-    if (desc)   desc.textContent   = 'Falla crítica detectada. Revise el sistema inmediatamente.';
-    if (pTitle) pTitle.textContent = '🔴 ALERTA: Fallo de sistema';
-    if (pBody)  pBody.textContent  = 'Revisión manual urgente requerida en el gallinero.';
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+    setTimeout(() => err.style.display = 'none', 3000);
   }
 }
+// Auto-focus
+window.addEventListener('DOMContentLoaded', () => {
+  const u = document.getElementById('login-user');
+  if (u) setTimeout(() => u.focus(), 100);
+});
 
-/* =============================================================
-   WEB SERIAL API — conexión real con el Pico físico
-   ============================================================= */
-async function connectSerial() {
-  if (!('serial' in navigator)) {
-    alert('Web Serial API no está disponible.\nUsa Google Chrome o Microsoft Edge.\nAbre el archivo en localhost si estás en HTTPS.');
-    return;
-  }
-  if (SIM.connected) { disconnectSerial(); return; }
-  try {
-    SIM.serialPort = await navigator.serial.requestPort();
-    await SIM.serialPort.open({ baudRate: 115200 });
-    SIM.connected = true;
-    $e('serial-label').textContent       = 'Desconectar Pico';
-    $e('btn-serial').style.background    = 'var(--green-light)';
-    $e('btn-serial').style.color         = 'var(--green)';
-    $e('btn-serial').style.borderColor   = '#b6dfbc';
-    readSerialLoop();
-  } catch(e) { console.warn('Serial:', e); }
-}
-
-async function disconnectSerial() {
-  SIM.connected = false;
-  if (SIM.serialPort) { try { await SIM.serialPort.close(); } catch(_){} SIM.serialPort = null; }
-  $e('serial-label').textContent     = 'Conectar Pico';
-  $e('btn-serial').style.background  = '';
-  $e('btn-serial').style.color       = '';
-  $e('btn-serial').style.borderColor = '';
-}
-
-async function readSerialLoop() {
-  const decoder = new TextDecoderStream();
-  SIM.serialPort.readable.pipeTo(decoder.writable);
-  const reader = decoder.readable.getReader();
-  let buf = '';
-  while (SIM.connected) {
-    try {
-      const { value, done } = await reader.read();
-      if (done) break;
-      buf += value;
-      const lines = buf.split('\n'); buf = lines.pop();
-      for (const line of lines) {
-        try {
-          /* Formato JSON enviado por sketch.ino via Serial.println() */
-          const d = JSON.parse(line.trim());
-          if (!isNaN(d.temp))  SIM.temp        = d.temp;
-          if (!isNaN(d.hum))   SIM.hum         = d.hum;
-          if (d.state)         SIM.alarmState  = d.state;
-          if (d.fan  != null)  SIM.fan         = !!d.fan;
-          if (d.heat != null)  SIM.heat        = !!d.heat;
-          if (d.light!= null)  SIM.light       = !!d.light;
-          if (!isNaN(d.hour))  SIM.simHour     = d.hour;
-          if (!isNaN(d.eggs))  SIM.eggCount    = d.eggs;
-          if (!isNaN(d.feed))  SIM.feedCount   = d.feed;
-          if (!isNaN(d.err))   SIM.errorCount  = d.err;
-          updateUI();
-        } catch(_) {}
-      }
-    } catch(e) { break; }
-  }
-  disconnectSerial();
-}
-
-/* =============================================================
-   LOOPS DE SIMULACIÓN (pausan cuando hay serial real conectado)
-   ============================================================= */
-setInterval(() => {
-  if (SIM.connected) return;
-  simulateSensor();
-  updateThermal();
-  SIM.alarmState = evaluateAlarms();
-  updateUI();
-}, 2000);
-
-setInterval(() => {
-  if (SIM.connected) return;
-  clockTick();
-}, 500);
-
-/* =============================================================
-   NAV
-   ============================================================= */
-const NAV_ORDER = ['dashboard','alarma','temperatura','iluminacion','alimentos','estadisticas','dfd','firma'];
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  const screen = document.getElementById('s-' + id);
-  if (screen) screen.classList.add('active');
-  const idx = NAV_ORDER.indexOf(id);
-  const tabs = document.querySelectorAll('.nav-tab');
-  if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+  document.getElementById('s-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
 }
 
+// ── TOGGLE ──
 function toggleIt(el) { el.classList.toggle('on'); }
 
-/* Slider manual de temperatura (pantalla Temp.) */
-function updateTemp(v) {
-  SIM.temp = parseFloat(v);
-  updateThermal();
-  SIM.alarmState = evaluateAlarms();
-  updateUI();
-}
-
-/* Botones manuales de alarma (pantalla Alarma) */
+// ── ALARM ──
 function setAlarm(color) {
-  SIM.alarmState = color === 'green' ? 'OK' : color === 'amber' ? 'WARNING' : 'DANGER';
-  updateUI();
+  const light = document.getElementById('alarm-light');
+  const label = document.getElementById('alarm-label');
+  const desc  = document.getElementById('alarm-desc');
+  const badge = document.querySelector('.alarm-badge');
+  const dot   = document.querySelector('.status-dot');
+  const pTitle= document.getElementById('push-title');
+  const pBody = document.getElementById('push-body');
+  light.className = 'alarm-light';
+  if(color==='green'){
+    light.classList.add('alarm-green');
+    light.innerHTML='<div class="alarm-ring"></div><i class="ti ti-check" style="font-size:28px"></i>';
+    label.textContent='VERDE · Todo OK';
+    desc.textContent='Todos los sistemas operando dentro de parámetros normales.';
+    badge.style.background='var(--green-light)'; badge.style.color='var(--green)'; badge.style.borderColor='#b6dfbc';
+    dot.style.background='var(--green)';
+    pTitle.textContent='✅ Sistema operando normalmente';
+    pBody.textContent='Temperatura 22°C · Alimento 68% · 47 huevos hoy';
+  } else if(color==='amber'){
+    light.classList.add('alarm-amber');
+    light.innerHTML='<div class="alarm-ring"></div><i class="ti ti-alert-triangle" style="font-size:28px"></i>';
+    label.textContent='AMARILLO · Aviso de reposición';
+    desc.textContent='Silo B llegará al 20% en 2 días. Reponer alimento pronto.';
+    badge.style.background='var(--amber-light)'; badge.style.color='var(--amber)'; badge.style.borderColor='#f5d9a8';
+    dot.style.background='var(--amber)';
+    pTitle.textContent='🟡 Aviso: Silo B casi vacío';
+    pBody.textContent='Stock para ~2 días. Requiere reposición pronto.';
+  } else {
+    light.classList.add('alarm-red');
+    light.innerHTML='<div class="alarm-ring"></div><i class="ti ti-alert-octagon" style="font-size:28px"></i>';
+    label.textContent='ROJO · Checkeo manual urgente';
+    desc.textContent='Falla crítica detectada. Revise el sistema inmediatamente.';
+    badge.style.background='var(--red-light)'; badge.style.color='var(--red)'; badge.style.borderColor='#f5c3be';
+    dot.style.background='var(--red)';
+    pTitle.textContent='🔴 ALERTA: Fallo de sistema';
+    pBody.textContent='Revisión manual urgente requerida en el gallinero.';
+  }
 }
 
-/* =============================================================
-   FIRMA DIGITAL
-   ============================================================= */
-let drawing = false, ctx, lastX, lastY;
-window.addEventListener('load', () => {
-  const canvas = $e('sig-canvas');
-  if (canvas) {
-    ctx = canvas.getContext('2d');
-    ctx.strokeStyle = '#1a1a18'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+// ── TEMPERATURE ──
+function updateTemp(v) {
+  v = parseInt(v);
+  document.getElementById('temp-val').innerHTML = v+'<span class="big-unit">°C</span>';
+  const pct = (v/50)*100;
+  document.getElementById('temp-needle').style.left = pct+'%';
+  const box  = document.getElementById('temp-status-box');
+  const txt  = document.getElementById('temp-status-text');
+  const act  = document.getElementById('temp-action-text');
+  const fan  = document.getElementById('fan-toggle');
+  const heat = document.getElementById('heat-toggle');
+  const fanS = document.getElementById('fan-sub');
+  const heatS= document.getElementById('heat-sub');
+  if(v > 26){
+    box.style.background='var(--red-light)';
+    txt.style.color='var(--red)'; txt.textContent='🌡 Temperatura ALTA — Extractor ON';
+    act.textContent='Extractor activado automáticamente. Monitoreo continuo.';
+    fan.classList.add('on'); heat.classList.remove('on');
+    fanS.textContent='✅ ACTIVO — Temperatura alta'; heatS.textContent='Inactiva';
+  } else if(v < 10){
+    box.style.background='var(--blue-light)';
+    txt.style.color='var(--blue)'; txt.textContent='❄ Temperatura BAJA — Calefacción ON';
+    act.textContent='Calefacción activada automáticamente. Monitoreo continuo.';
+    heat.classList.add('on'); fan.classList.remove('on');
+    heatS.textContent='✅ ACTIVA — Temperatura baja'; fanS.textContent='Inactivo';
+  } else {
+    box.style.background='var(--green-light)';
+    txt.style.color='var(--green)'; txt.textContent='✅ Temperatura normal';
+    act.textContent='Sin acción requerida. Rango ideal activo.';
+    fan.classList.remove('on'); heat.classList.remove('on');
+    fanS.textContent='Inactivo · Activa >26°C'; heatS.textContent='Inactiva · Activa <10°C';
   }
-  const fh = $e('fecha-hoy');
-  if (fh) fh.textContent = new Date().toLocaleDateString('es-CL', {year:'numeric',month:'long',day:'numeric'});
-  updateUI();  /* render inicial */
+}
+
+// ── SIGNATURE CANVAS ──
+let drawing=false, ctx, lastX, lastY;
+window.addEventListener('load',()=>{
+  const canvas=document.getElementById('sig-canvas');
+  if(!canvas)return;
+  ctx=canvas.getContext('2d');
+  ctx.strokeStyle='#1a1a18'; ctx.lineWidth=2; ctx.lineCap='round';
+  const d=new Date();
+  document.getElementById('fecha-hoy').textContent=d.toLocaleDateString('es-CL',{year:'numeric',month:'long',day:'numeric'});
 });
-function getPos(e, canvas) {
-  const r = canvas.getBoundingClientRect(), sx = canvas.width / r.width;
-  return { x: (e.clientX - r.left) * sx, y: (e.clientY - r.top) * sx };
+function getPos(e,canvas){
+  const r=canvas.getBoundingClientRect();
+  const scaleX=canvas.width/r.width;
+  return{x:(e.clientX-r.left)*scaleX, y:(e.clientY-r.top)*scaleX};
 }
-function startDraw(e)  { drawing = true; const p = getPos(e, e.target); lastX = p.x; lastY = p.y; }
-function draw(e)       { if (!drawing) return; const p = getPos(e, e.target); ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y); ctx.stroke(); lastX = p.x; lastY = p.y; }
-function stopDraw()    { drawing = false; }
-function startDrawT(e) { e.preventDefault(); startDraw(e.touches[0]); }
-function drawT(e)      { e.preventDefault(); draw(e.touches[0]); }
-function clearSig() {
-  ctx.clearRect(0, 0, $e('sig-canvas').width, $e('sig-canvas').height);
-  $e('firma-ok').style.display = 'none';
-  $e('status-firma').className = 'pill pill-amber';
-  $e('status-firma').innerHTML = '<i class="ti ti-clock"></i> Pendiente';
+function startDraw(e){
+  drawing=true;
+  const p=getPos(e,e.target);
+  lastX=p.x; lastY=p.y;
 }
-function firmar() {
-  $e('firma-ok').style.display = 'block';
-  $e('status-firma').className = 'pill pill-green';
-  $e('status-firma').innerHTML = '<i class="ti ti-check"></i> Aprobado';
-  const now = new Date();
-  $e('firma-ts').textContent = 'Firmado el ' + now.toLocaleDateString('es-CL') + ' a las ' + now.toLocaleTimeString('es-CL', {hour:'2-digit',minute:'2-digit'});
+function draw(e){
+  if(!drawing)return;
+  const p=getPos(e,e.target);
+  ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke();
+  lastX=p.x; lastY=p.y;
+}
+function stopDraw(){ drawing=false; }
+function startDrawT(e){ e.preventDefault(); startDraw(e.touches[0]); }
+function drawT(e){ e.preventDefault(); draw(e.touches[0]); }
+function clearSig(){
+  const canvas=document.getElementById('sig-canvas');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  document.getElementById('firma-ok').style.display='none';
+  document.getElementById('status-firma').className='pill pill-amber';
+  document.getElementById('status-firma').innerHTML='<i class="ti ti-clock"></i> Pendiente';
+}
+function firmar(){
+  document.getElementById('firma-ok').style.display='block';
+  document.getElementById('status-firma').className='pill pill-green';
+  document.getElementById('status-firma').innerHTML='<i class="ti ti-check"></i> Aprobado';
+  const now=new Date();
+  document.getElementById('firma-ts').textContent='Firmado el '+now.toLocaleDateString('es-CL')
+    +' a las '+now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
 }
 </script>
 </body>

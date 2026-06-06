@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "author": "PRO204 - Gallinero Automatizado",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-pi-pico", "id": "pico", "top": 260, "left": 240, "attrs": {} },
+
+    { "type": "wokwi-dht22",  "id": "dht1",  "top": 50,  "left": 680, "attrs": {} },
+
+    { "type": "wokwi-ssd1306", "id": "oled1", "top": -120, "left": 185, "attrs": { "i2cAddress": "0x3c" } },
+
+    { "type": "wokwi-led",      "id": "ledRed",    "top": 60,  "left": 48,  "attrs": { "color": "red",    "label": "PELIGRO"   } },
+    { "type": "wokwi-resistor", "id": "rRed",      "top": 120, "left": 40,  "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledGreen",  "top": 60,  "left": 98,  "attrs": { "color": "green",  "label": "OK"        } },
+    { "type": "wokwi-resistor", "id": "rGreen",    "top": 120, "left": 90,  "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledYellow", "top": 60,  "left": 148, "attrs": { "color": "yellow", "label": "AVISO"     } },
+    { "type": "wokwi-resistor", "id": "rYellow",   "top": 120, "left": 140, "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-buzzer",   "id": "buz1",      "top": 70,  "left": 195, "attrs": { "volume": "0.3"  } },
+
+    { "type": "wokwi-servo",    "id": "servo1",    "top": 600, "left": 490, "attrs": {} },
+
+    { "type": "wokwi-led",      "id": "ledFan",    "top": 600, "left": 48,  "attrs": { "color": "blue",   "label": "VENTILADOR"  } },
+    { "type": "wokwi-resistor", "id": "rFan",      "top": 660, "left": 40,  "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledHeat",   "top": 600, "left": 98,  "attrs": { "color": "red",    "label": "CALEFACCION" } },
+    { "type": "wokwi-resistor", "id": "rHeat",     "top": 660, "left": 90,  "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledL1",     "top": 600, "left": 168, "attrs": { "color": "white",  "label": "LUZ 1"     } },
+    { "type": "wokwi-resistor", "id": "rL1",       "top": 660, "left": 160, "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledL2",     "top": 600, "left": 208, "attrs": { "color": "white",  "label": "LUZ 2"     } },
+    { "type": "wokwi-resistor", "id": "rL2",       "top": 660, "left": 200, "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-led",      "id": "ledL3",     "top": 600, "left": 248, "attrs": { "color": "white",  "label": "LUZ 3"     } },
+    { "type": "wokwi-resistor", "id": "rL3",       "top": 660, "left": 240, "attrs": { "value": "220" },  "rotate": 90 },
+
+    { "type": "wokwi-pushbutton", "id": "btnReset", "top": 760, "left": 180, "attrs": { "color": "blue" } },
+    { "type": "wokwi-pushbutton", "id": "btnTest",  "top": 760, "left": 320, "attrs": { "color": "red"  } }
+  ],
+  "connections": [
+    ["pico:GP0",  "dht1:SDA",   "green",  []],
+    ["pico:3V3",  "dht1:VCC",   "red",    []],
+    ["pico:GND.1","dht1:GND",   "black",  []],
+
+    ["pico:GP20", "oled1:SDA",  "blue",   []],
+    ["pico:GP21", "oled1:SCL",  "yellow", []],
+    ["pico:3V3",  "oled1:VCC",  "red",    []],
+    ["pico:GND.1","oled1:GND",  "black",  []],
+
+    ["pico:GP1",  "rRed:1",     "red",    []],
+    ["rRed:2",    "ledRed:A",   "red",    []],
+    ["ledRed:K",  "pico:GND.1", "black",  []],
+
+    ["pico:GP2",  "rGreen:1",   "green",  []],
+    ["rGreen:2",  "ledGreen:A", "green",  []],
+    ["ledGreen:K","pico:GND.1", "black",  []],
+
+    ["pico:GP3",  "rYellow:1",  "yellow", []],
+    ["rYellow:2", "ledYellow:A","yellow", []],
+    ["ledYellow:K","pico:GND.1","black",  []],
+
+    ["pico:GP4",  "buz1:1",     "purple", []],
+    ["pico:GND.1","buz1:2",     "black",  []],
+
+    ["pico:GP5",  "servo1:PWM", "orange", []],
+    ["pico:VSYS", "servo1:V+",  "red",    []],
+    ["pico:GND.1","servo1:GND", "black",  []],
+
+    ["pico:GP6",  "rFan:1",     "blue",   []],
+    ["rFan:2",    "ledFan:A",   "blue",   []],
+    ["ledFan:K",  "pico:GND.1", "black",  []],
+
+    ["pico:GP7",  "rHeat:1",    "red",    []],
+    ["rHeat:2",   "ledHeat:A",  "red",    []],
+    ["ledHeat:K", "pico:GND.1", "black",  []],
+
+    ["pico:GP8",  "rL1:1",      "white",  []],
+    ["rL1:2",     "ledL1:A",    "white",  []],
+    ["ledL1:K",   "pico:GND.1", "black",  []],
+
+    ["pico:GP9",  "rL2:1",      "white",  []],
+    ["rL2:2",     "ledL2:A",    "white",  []],
+    ["ledL2:K",   "pico:GND.1", "black",  []],
+
+    ["pico:GP10", "rL3:1",      "white",  []],
+    ["rL3:2",     "ledL3:A",    "white",  []],
+    ["ledL3:K",   "pico:GND.1", "black",  []],
+
+    ["pico:GP14", "btnReset:1.l","blue",  []],
+    ["pico:GND.1","btnReset:2.r","black", []],
+
+    ["pico:GP15", "btnTest:1.l", "red",   []],
+    ["pico:GND.1","btnTest:2.r", "black", []]
+  ]
+}
