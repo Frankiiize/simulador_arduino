@@ -58,6 +58,56 @@ input {
   margin-left: 8px;
 }
 
+.app-nav {
+  align-items: center;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 4px;
+  padding: 0 16px;
+}
+
+.nav-link {
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 12px;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.nav-link:hover {
+  color: var(--text);
+}
+
+.nav-link.active {
+  border-bottom-color: var(--green);
+  color: var(--text);
+}
+
+.alarm-reasons {
+  list-style: none;
+  margin: 6px 0 10px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alarm-reasons li {
+  color: var(--muted);
+  font-size: 11px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.alarm-reasons li::before {
+  content: '›';
+  left: 0;
+  position: absolute;
+}
+
 .topbar-right {
   align-items: center;
   color: var(--muted);

@@ -107,6 +107,8 @@ export function normalizeTelemetry(raw = {}) {
   };
 }
 
+const INITIAL_HENS = 50;
+
 export function createCoopState({
   source,
   connected,
@@ -117,9 +119,9 @@ export function createCoopState({
   weatherAutomation = createDefaultWeatherAutomation(),
   timeSource = createDefaultTimeSource(),
   lightAutomation = createDefaultLightAutomation(),
-  location = null
+  location = null,
+  hens = INITIAL_HENS
 }) {
-  const hens = 50;
   const eggs = telemetry.eggs;
   const connection = controller || {
     connected,
@@ -137,8 +139,8 @@ export function createCoopState({
     telemetry,
     production: {
       hens,
-      mortality: 0,
-      posture: Math.min(100, Math.round((eggs / hens) * 100))
+      mortality: INITIAL_HENS - hens,
+      posture: Math.min(100, Math.round((eggs / Math.max(1, hens)) * 100))
     },
     resources,
     weather,

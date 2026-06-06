@@ -12,6 +12,8 @@ import {
 
 const WOKWI_STALE_MS = 5000;
 const LIGHT_TICK_MS = 60 * 1000;
+const INITIAL_HENS = 50;
+const DANGER_CYCLES_PER_DEATH = 10;
 
 export class GallineroService extends EventEmitter {
   constructor({
@@ -42,6 +44,8 @@ export class GallineroService extends EventEmitter {
     this.source = 'disconnected';
     this.connected = false;
     this.lastWokwiTelemetryAt = 0;
+    this.hens = INITIAL_HENS;
+    this.dangerCycles = 0;
     this.lastWeatherCommand = '';
     this.lastLightCommand = '';
     this.timeRefreshInFlight = false;
@@ -52,6 +56,7 @@ export class GallineroService extends EventEmitter {
       this.telemetry = normalizeTelemetry(telemetry);
       this.source = 'wokwi';
       this.connected = true;
+      this.updateMortality();
       this.emitState();
     });
 
@@ -130,8 +135,23 @@ export class GallineroService extends EventEmitter {
       weatherAutomation: this.weatherAutomation,
       timeSource: this.resolveCurrentTime(),
       lightAutomation: this.lightAutomation,
-      location: this.locationService.getState()
+      location: this.locationService.getState(),
+      hens: this.hens
     });
+  }
+
+  updateMortality() {
+    const { alarmState, temperature } = this.telemetry;
+    const tempDanger = temperature > 34 || temperature < 4;
+    if (alarmState === 'DANGER' && tempDanger) {
+      this.dangerCycles++;
+      if (this.dangerCycles >= DANGER_CYCLES_PER_DEATH && this.hens > 0) {
+        this.hens = Math.max(0, this.hens - 1);
+        this.dangerCycles = 0;
+      }
+    } else {
+      this.dangerCycles = 0;
+    }
   }
 
   async control(target, payload = {}) {
