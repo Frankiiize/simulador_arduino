@@ -1,3 +1,33 @@
+// Datos reales: K-State Extension / FAO / Alabama Cooperative Extension
+export const FARM = {
+  siloCapacityKg: 50,      // kg por silo (capacidad física del depósito)
+  tankCapacityL: 200,      // litros totales del tanque de agua
+  feedPerHenGDay: 120,     // g/gallina/día (rango real: 110-130 g)
+  waterPerHenMlDay: 250,   // ml/gallina/día (FAO estándar a 20°C)
+  feedCyclesPerDay: 4,     // ciclos/día reales (cada 6 h simuladas)
+};
+
+export function calcFeedAutonomy(silos, hens) {
+  const totalKg = silos.reduce((sum, s) => sum + (s.level / 100) * FARM.siloCapacityKg, 0);
+  const dailyKg = (hens * FARM.feedPerHenGDay) / 1000;
+  const perCycleKg = dailyKg / FARM.feedCyclesPerDay;
+  const autonomyDays = dailyKg > 0 ? totalKg / dailyKg : 0;
+  return { totalKg, dailyKg, perCycleKg, autonomyDays };
+}
+
+export function calcWaterAutonomy(waterPct, hens) {
+  const totalL = (waterPct / 100) * FARM.tankCapacityL;
+  const dailyL = (hens * FARM.waterPerHenMlDay) / 1000;
+  const autonomyDays = dailyL > 0 ? totalL / dailyL : 0;
+  return { totalL, dailyL, autonomyDays };
+}
+
+export function autonomyColor(days) {
+  if (days > 7) return 'green';
+  if (days > 3) return 'amber';
+  return 'red';
+}
+
 export function clampNumber(value, min, max) {
   const number = Number(value);
   if (!Number.isFinite(number)) return min;

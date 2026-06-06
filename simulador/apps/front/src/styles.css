@@ -853,6 +853,43 @@ input[type="range"]::-webkit-slider-thumb {
   text-transform: uppercase;
 }
 
+.silo-kg {
+  color: var(--muted);
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+.resource-note {
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 8px;
+}
+
+.autonomy-badge {
+  border-radius: 6px;
+  font-size: 12px;
+  margin: 8px 0;
+  padding: 7px 10px;
+}
+
+.autonomy-badge.green {
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+  color: var(--green);
+}
+
+.autonomy-badge.amber {
+  background: rgba(210, 153, 34, 0.1);
+  border: 1px solid rgba(210, 153, 34, 0.3);
+  color: var(--amber);
+}
+
+.autonomy-badge.red {
+  background: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+  color: var(--red);
+}
+
 .tank-outer {
   background: var(--bg);
   border: 1px solid var(--blue);
