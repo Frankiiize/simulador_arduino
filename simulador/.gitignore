@@ -3,3 +3,4 @@ apps/front/dist/
 data/
 npm-debug.log*
 .DS_Store
+.env
