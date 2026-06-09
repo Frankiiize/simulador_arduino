@@ -9,6 +9,7 @@ import {
   createDefaultWeatherAutomation,
   normalizeTelemetry
 } from '../domain/coopState.js';
+import { HistoryStore } from '../domain/historyStore.js';
 
 const WOKWI_STALE_MS = 5000;
 const LIGHT_TICK_MS = 60 * 1000;
@@ -50,6 +51,9 @@ export class GallineroService extends EventEmitter {
     this.lastLightCommand = '';
     this.timeRefreshInFlight = false;
     this.lightTimer = null;
+    this.history = new HistoryStore();
+    this._lastAlarmState = null;
+    this._lastConnected = null;
 
     this.wokwiSimulator.on('telemetry', telemetry => {
       this.lastWokwiTelemetryAt = Date.now();
@@ -57,12 +61,15 @@ export class GallineroService extends EventEmitter {
       this.source = 'wokwi';
       this.connected = true;
       this.updateMortality();
+      this._trackAlarmChange(this.telemetry.alarmState);
+      this.history.maybeAddSnapshot(this.telemetry, this.hens);
       this.emitState();
     });
 
     this.wokwiSimulator.on('status', status => {
       this.connected = Boolean(status.connected);
       this.source = this.connected ? 'wokwi' : 'disconnected';
+      this._trackConnectionChange(this.connected);
       if (this.connected) {
         this.applyWeatherAutomation(true);
         this.applyLightAutomation(true);
@@ -148,10 +155,33 @@ export class GallineroService extends EventEmitter {
       if (this.dangerCycles >= DANGER_CYCLES_PER_DEATH && this.hens > 0) {
         this.hens = Math.max(0, this.hens - 1);
         this.dangerCycles = 0;
+        this.history.addEvent('MORTALITY', `Mortalidad registrada: ${this.hens} gallinas activas (T: ${temperature.toFixed(1)} C)`, 'danger');
       }
     } else {
       this.dangerCycles = 0;
     }
+  }
+
+  _trackAlarmChange(newAlarm) {
+    if (newAlarm === this._lastAlarmState) return;
+    this._lastAlarmState = newAlarm;
+    const severityMap = { DANGER: 'danger', WARNING: 'warning', OK: 'success', AUTO: 'info' };
+    const labelMap = { DANGER: 'PELIGRO', WARNING: 'ADVERTENCIA', OK: 'OK', AUTO: 'AUTO' };
+    this.history.addEvent('ALARM', `Alarma cambiada a ${labelMap[newAlarm] || newAlarm}`, severityMap[newAlarm] || 'info');
+  }
+
+  _trackConnectionChange(connected) {
+    if (connected === this._lastConnected) return;
+    this._lastConnected = connected;
+    if (connected) {
+      this.history.addEvent('CONNECTION', 'Simulador Wokwi conectado', 'success');
+    } else {
+      this.history.addEvent('CONNECTION', 'Simulador Wokwi desconectado', 'warning');
+    }
+  }
+
+  getStats() {
+    return this.history.getStats();
   }
 
   async control(target, payload = {}) {
@@ -159,6 +189,13 @@ export class GallineroService extends EventEmitter {
     let sent = false;
     if (command) {
       sent = this.wokwiSimulator.sendCommand(command);
+    }
+
+    if (target === 'feed') {
+      this.history.addEvent('FEED', 'Ciclo de alimentacion activado manualmente', 'info');
+    }
+    if (target === 'reset') {
+      this.history.addEvent('SYSTEM', 'Sistema reiniciado a modo automatico', 'success');
     }
 
     if (target === 'resources') {

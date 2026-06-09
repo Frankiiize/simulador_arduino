@@ -29,6 +29,10 @@ export function createApiRouter(service) {
     res.json(service.getLocations());
   });
 
+  router.get('/stats', (req, res) => {
+    res.json(service.getStats());
+  });
+
   router.get('/events', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');

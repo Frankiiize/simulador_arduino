@@ -289,6 +289,7 @@ export default function App() {
           <NavLink to="/controles" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Controles</NavLink>
           <NavLink to="/recursos" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Recursos</NavLink>
           <NavLink to="/ubicacion" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Ubicación</NavLink>
+          <NavLink to="/estadisticas" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Estadísticas</NavLink>
         </nav>
 
         <main className="main">

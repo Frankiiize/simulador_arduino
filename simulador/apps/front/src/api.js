@@ -116,6 +116,12 @@ export async function resetLocation() {
   return response.json();
 }
 
+export async function fetchStats() {
+  const response = await fetch(`${API_BASE}/api/stats`);
+  if (!response.ok) throw new Error('No se pudieron leer las estadisticas');
+  return response.json();
+}
+
 export function subscribeState(onState, onError) {
   const events = new EventSource(`${API_BASE}/api/events`);
   events.onmessage = event => onState(JSON.parse(event.data));
