@@ -348,10 +348,9 @@ export default function App() {
     <AppContext.Provider value={ctx}>
       <div className="app-shell">
         <header className="topbar">
-          <div className="brand">GallineroSmart <span>NAVE INDUSTRIAL v1.0</span></div>
+          <div className="brand">GallineroSmart </div>
           <div className="topbar-right">
             <span>{clock}</span>
-            <span>NAVE-01</span>
             <span>{state.production.hens} gallinas</span>
             <span className={`source-pill ${state.connected ? 'online' : 'offline'}`}>
               {state.connected ? 'SIMULADOR' : 'DESCONECTADO'}
