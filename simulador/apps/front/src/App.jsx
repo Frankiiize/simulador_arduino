@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   fetchState,
   addManualLocation,
@@ -103,7 +103,68 @@ const emptyState = {
   }
 };
 
+const AUTH_STORAGE_KEY = 'gallinero-auth';
+const AUTH_USER = 'admin';
+const AUTH_PASSWORD = '1234';
+
+function LoginScreen({ onLogin }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  const submit = event => {
+    event.preventDefault();
+    if (username.trim() === AUTH_USER && password === AUTH_PASSWORD) {
+      localStorage.setItem(AUTH_STORAGE_KEY, 'authenticated');
+      setLoginError('');
+      onLogin();
+      return;
+    }
+    setLoginError('Usuario o contraseña incorrectos');
+  };
+
+  return (
+    <main className="login-page">
+      <section className="login-card">
+        <div className="login-brand">GallineroSmart</div>
+        <h1>Ingreso al sistema</h1>
+        <p>Panel de control de nave industrial</p>
+
+        <form className="login-form" onSubmit={submit}>
+          <label>
+            Usuario
+            <input
+              autoComplete="username"
+              autoFocus
+              className="field"
+              onChange={event => setUsername(event.target.value)}
+              placeholder="admin"
+              type="text"
+              value={username}
+            />
+          </label>
+          <label>
+            Contraseña
+            <input
+              autoComplete="current-password"
+              className="field"
+              onChange={event => setPassword(event.target.value)}
+              placeholder="1234"
+              type="password"
+              value={password}
+            />
+          </label>
+          {loginError && <div className="login-error">{loginError}</div>}
+          <button className="btn btn-green login-submit" type="submit">Ingresar</button>
+        </form>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
+  const location = useLocation();
+  const [authenticated, setAuthenticated] = useState(() => localStorage.getItem(AUTH_STORAGE_KEY) === 'authenticated');
   const [state, setState] = useState(emptyState);
   const [clock, setClock] = useState('');
   const [error, setError] = useState('');
@@ -115,6 +176,8 @@ export default function App() {
   });
 
   useEffect(() => {
+    if (!authenticated) return undefined;
+
     const load = async () => {
       try {
         setState(await fetchState());
@@ -131,7 +194,7 @@ export default function App() {
     );
     const poll = setInterval(load, 5000);
     return () => { unsubscribe(); clearInterval(poll); };
-  }, []);
+  }, [authenticated]);
 
   useEffect(() => {
     const updateClock = () => {
@@ -152,6 +215,8 @@ export default function App() {
   const activeLocation = locationState.active || emptyState.location.active;
   const controllerOnline = state.connected;
   const fanSpeed = controllerOnline ? clampNumber(telemetry.fanSpeed, 0, 100) : 0;
+  const isDashboardRoute = location.pathname === '/';
+  const isLifecycleRoute = location.pathname === '/ciclo-vida';
 
   const controlMode = async (target, mode) => {
     const result = await sendControl(target, { mode });
@@ -254,6 +319,13 @@ export default function App() {
     setManualLocation({ label: '', latitude: '', longitude: '', timezone: 'America/Santiago' });
   };
 
+  const logout = () => {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setAuthenticated(false);
+    setState(emptyState);
+    setError('');
+  };
+
   const ctx = {
     state, error, clock,
     telemetry, resources, weather, weatherAutomation,
@@ -268,6 +340,10 @@ export default function App() {
     useBrowserGeolocation, saveManualLocation,
   };
 
+  if (!authenticated) {
+    return <LoginScreen onLogin={() => setAuthenticated(true)} />;
+  }
+
   return (
     <AppContext.Provider value={ctx}>
       <div className="app-shell">
@@ -280,6 +356,7 @@ export default function App() {
             <span className={`source-pill ${state.connected ? 'online' : 'offline'}`}>
               {state.connected ? 'SIMULADOR' : 'DESCONECTADO'}
             </span>
+            <button className="logout-btn" onClick={logout} type="button">Salir</button>
             <div className="live-dot" />
           </div>
         </header>
@@ -288,30 +365,39 @@ export default function App() {
           <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Dashboard</NavLink>
           <NavLink to="/controles" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Controles</NavLink>
           <NavLink to="/recursos" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Recursos</NavLink>
+          <NavLink to="/ciclo-vida" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Ciclo de vida</NavLink>
           <NavLink to="/ubicacion" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Ubicación</NavLink>
           <NavLink to="/estadisticas" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Estadísticas</NavLink>
         </nav>
 
-        <main className="main">
-          <section className="scene-wrap">
-            <IndustrialScene telemetry={telemetry} resources={resources} connected={state.connected} />
-            {!state.connected && (
-              <div className="scene-disconnected">
-                <strong>Simulador desconectado</strong>
-                <span>La visualización está congelada hasta recibir telemetría por RFC2217.</span>
-              </div>
-            )}
-            <div className="hud">
-              <HudChip color={controllerOnline ? 'green' : 'muted'} label={controllerOnline ? `T: ${telemetry.temperature.toFixed(1)} C` : 'T: --'} />
-              <HudChip color={controllerOnline ? 'blue' : 'muted'} label={controllerOnline ? `H: ${telemetry.humidity}%` : 'H: --'} />
-              <HudChip color={controllerOnline && telemetry.fanOn ? 'blue' : 'muted'} label={controllerOnline ? `EXTRACTOR: ${telemetry.fanOn ? `ON · ${fanSpeed}%` : 'OFF'}` : 'EXTRACTOR: --'} />
-              <HudChip color={controllerOnline && telemetry.lightOn ? 'amber' : 'muted'} label={controllerOnline ? `LUZ: ${telemetry.lightOn ? 'ON' : 'OFF'} · ${telemetry.hour}h` : 'LUZ: --'} />
-            </div>
-          </section>
+        <main className={`main ${!isDashboardRoute ? 'main-full' : ''}`}>
+          {isDashboardRoute ? (
+            <>
+              <section className="scene-wrap">
+                <IndustrialScene telemetry={telemetry} resources={resources} connected={state.connected} />
+                {!state.connected && (
+                  <div className="scene-disconnected">
+                    <strong>Simulador desconectado</strong>
+                    <span>La visualización está congelada hasta recibir telemetría por RFC2217.</span>
+                  </div>
+                )}
+                <div className="hud">
+                  <HudChip color={controllerOnline ? 'green' : 'muted'} label={controllerOnline ? `T: ${telemetry.temperature.toFixed(1)} C` : 'T: --'} />
+                  <HudChip color={controllerOnline ? 'blue' : 'muted'} label={controllerOnline ? `H: ${telemetry.humidity}%` : 'H: --'} />
+                  <HudChip color={controllerOnline && telemetry.fanOn ? 'blue' : 'muted'} label={controllerOnline ? `EXTRACTOR: ${telemetry.fanOn ? `ON · ${fanSpeed}%` : 'OFF'}` : 'EXTRACTOR: --'} />
+                  <HudChip color={controllerOnline && telemetry.lightOn ? 'amber' : 'muted'} label={controllerOnline ? `LUZ: ${telemetry.lightOn ? 'ON' : 'OFF'} · ${telemetry.hour}h` : 'LUZ: --'} />
+                </div>
+              </section>
 
-          <aside className="sidebar">
-            <Outlet />
-          </aside>
+              <aside className="sidebar">
+                <Outlet />
+              </aside>
+            </>
+          ) : (
+            <div className={isLifecycleRoute ? '' : 'dedicated-page'}>
+              <Outlet />
+            </div>
+          )}
         </main>
       </div>
     </AppContext.Provider>
