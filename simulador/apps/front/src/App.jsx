@@ -217,6 +217,7 @@ export default function App() {
   const fanSpeed = controllerOnline ? clampNumber(telemetry.fanSpeed, 0, 100) : 0;
   const isDashboardRoute = location.pathname === '/';
   const isLifecycleRoute = location.pathname === '/ciclo-vida';
+  const isStatsRoute = location.pathname === '/estadisticas';
 
   const controlMode = async (target, mode) => {
     const result = await sendControl(target, { mode });
@@ -393,7 +394,7 @@ export default function App() {
               </aside>
             </>
           ) : (
-            <div className={isLifecycleRoute ? '' : 'dedicated-page'}>
+            <div className={isLifecycleRoute ? '' : isStatsRoute ? "dedicated-page-stats" : 'dedicated-page' }>
               <Outlet />
             </div>
           )}

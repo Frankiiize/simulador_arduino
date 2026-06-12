@@ -18,9 +18,12 @@ export default function Controls() {
         mode={telemetry.modes.light}
         onMode={mode => controlMode('light', mode)}
         subtitle={`Ciclo solar · ${resources.lux} lux`}
-      />
-      <Gauge label="Intensidad" value={Math.round(resources.lux / 10)} max={100} color="amber" suffix="%" />
-      <input type="range" min="0" max="100" value={Math.round(resources.lux / 10)} onChange={event => setLux(event.target.value)} />
+      >
+        <Card style={{ marginTop: '10px' }}> 
+          <Gauge label="Intensidad" value={Math.round(resources.lux / 10)} max={100} color="amber" suffix="%" />
+          <input type="range" min="0" max="100" value={Math.round(resources.lux / 10)} onChange={event => setLux(event.target.value)} />
+        </Card>
+      </ControlCard>
 
       <Card title="Horario real de luz">
         <div className="weather-grid">

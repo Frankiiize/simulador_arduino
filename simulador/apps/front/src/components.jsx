@@ -1,15 +1,15 @@
 import { fanSpeedLevel } from './utils.js';
 
-export function Card({ title, children }) {
+export function Card({ title, children, style }) {
   return (
-    <section className="ctrl-card">
+    <section className="ctrl-card" style={style}>
       <div className="s-title">{title}</div>
       {children}
     </section>
   );
 }
 
-export function ControlCard({ title, active, mode, onMode, subtitle }) {
+export function ControlCard({ title, active, mode, onMode, subtitle, children }) {
   return (
     <Card title={title}>
       <div className="tog-row">
@@ -30,6 +30,7 @@ export function ControlCard({ title, active, mode, onMode, subtitle }) {
           </button>
         ))}
       </div>
+      {children}
     </Card>
   );
 }
