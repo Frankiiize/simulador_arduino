@@ -349,6 +349,7 @@ export default function App() {
     <AppContext.Provider value={ctx}>
       <div className="app-shell">
         <header className="topbar">
+            <div class="brand-icon">🐔</div>
           <div className="brand">GallineroSmart </div>
           <div className="topbar-right">
             <span>{clock}</span>
