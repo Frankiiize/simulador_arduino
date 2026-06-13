@@ -1,4 +1,5 @@
 [wokwi]
 version = 1
-firmware = "arduino-pico"
-elf = "build/gallinero.elf"
+firmware = "build/wokwi.ino.uf2"
+elf = "build/wokwi.ino.elf"
+rfc2217ServerPort = 4000
